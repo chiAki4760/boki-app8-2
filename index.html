@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">ストーリー簿記ドリル</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container" id="mainContainer">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-icon" id="app-logo">📘</div>
+      <div>
+        <h1 class="logo-title" id="app-title">ストーリー簿記ドリル</h1>
+        <div style="font-size:0.7rem; color:var(--text-muted);" id="sub-title">〜 基礎仕訳演習 〜</div>
+      </div>
+    </div>
+    <span class="status-badge" id="status-tag">演習中</span>
+  </div>
+
+  <div class="stage-tabs">
+    <button type="button" class="stage-btn active" id="tab-0" onclick="switchStage(0)">Stage 1</button>
+    <button type="button" class="stage-btn" id="tab-1" onclick="switchStage(1)">Stage 2</button>
+    <button type="button" class="stage-btn" id="tab-2" onclick="switchStage(2)">Stage 3</button>
+    <button type="button" class="stage-btn" id="tab-3" onclick="switchStage(3)">Stage 4</button>
+    <button type="button" class="stage-btn" id="tab-4" onclick="switchStage(4)">Stage 5</button>
+  </div>
+
+  <div class="quest-progress">
+    <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:bold;">
+      <span id="stage-badge-text">Stage 1</span>
+      <span id="progress-text">第 1 問</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div id="quiz-area">
+    <div class="card">
+      <div class="question-label" id="q-number">QUESTION // 01</div>
+      <p class="story-text" id="story-display">読み込み中...</p>
+    </div>
+
+    <div class="split-container">
+      <div class="side-column">
+        <div class="side-title">借方 (Debit)</div>
+        <div id="debit-rows"></div>
+        <button type="button" class="btn-add" onclick="addRow('debit')">＋ 行を追加</button>
+      </div>
+      <div class="side-column credit">
+        <div class="side-title">貸方 (Credit)</div>
+        <div id="credit-rows"></div>
+        <button type="button" class="btn-add" onclick="addRow('credit')">＋ 行を追加</button>
+      </div>
+    </div>
+
+    <button type="button" class="btn-submit" id="submit-btn" onclick="checkAnswer()">仕訳を判定する</button>
+    <div id="result-display" class="result-box"></div>
+
+    <div class="nav-buttons">
+      <button type="button" class="nav-btn" onclick="prevQuestion()">◀ 前へ</button>
+      <button type="button" class="nav-btn" id="next-btn" onclick="nextQuestion()">次へ ▶</button>
+    </div>
+  </div>
+
+  <div id="clear-area" class="clear-card">
+    <h2 id="clear-heading">ステージクリア！</h2>
+    <div id="complete-badge-area"></div>
+    <p id="score-text" style="line-height:1.6; color:var(--text-muted);"></p>
+    <div id="review-btn-area"></div>
+    <button type="button" class="btn-restart" onclick="startFreshStage()">このステージを最初からやり直す</button>
+  </div>
+
+  <details>
+    <summary>📥 追加問題データを取り込む (JSON)</summary>
+    <textarea id="json-input" placeholder="AIで作成したJSON配列をここに貼り付けると、現在のステージを上書きできます"></textarea>
+    <button type="button" class="load-btn" onclick="loadCustomData()">問題データを更新</button>
+  </details>
+
+  <span class="reset-link" onclick="forceReset()">※ データを初期化して元の問題に戻す</span>
+</div>
+
+<script src="theme.js"></script>
+<script src="questions.js"></script>
+<script src="app.js"></script>
+<script src="custom-importer.js"></script>
+</body>
+</html>
