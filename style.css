@@ -28,7 +28,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   color: var(--text-main);
   background-color: var(--bg-body);
   background-image: var(--bg-gradient);
@@ -36,6 +36,16 @@ body {
   overflow-x: hidden;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+/* 各パーツにも確実にフォント変数を継承させる */
+.logo-title, .question-label, .btn-submit {
+  font-family: var(--font-title, var(--font-main)) !important;
+}
+
+.story-text, .side-title, .entry-row input, .btn-add, .nav-btn, .result-box, .stage-btn {
+  font-family: var(--font-main) !important;
+}
+
 
 .container {
   width: 100%;
