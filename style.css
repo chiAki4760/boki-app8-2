@@ -225,7 +225,7 @@ body {
   border-radius: 6px;
   font-size: 0.9rem;
   background: var(--card-bg);
-  color: var(--text-main);
+  color: var(--card-text);
   width: 100%;
   font-family: var(--font-main);
 }
