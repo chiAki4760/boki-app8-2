@@ -102,7 +102,7 @@ Webアプリの「特定ステージ用問題取り込み窓」に貼り付け�
 本アプリのコードや仕組みをベースに派生アプリを作成・公開・再配布する場合は、オリジナルの考案者として以下のクレジット表記を記載していただけますと幸いです。  
 
 
-Original Concept / App base by [あなたの活動名] ([GitHubリポジトリURL または note URL])
+Original Concept / App base by [chiaki4760] ([GitHubリポジトリURL または note URL])
 
 
   
