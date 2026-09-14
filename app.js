@@ -10,7 +10,7 @@ let isReviewMode = false;
 function applyTheme() {
   if (typeof THEME === "undefined") return;
 
-  // 1. Webフォントの動的読み込み
+  // 1. Google Fontsなどの外部フォント動的読み込み
   if (THEME.fontUrl) {
     let fontLink = document.getElementById("theme-font-link");
     if (!fontLink) {
@@ -22,22 +22,28 @@ function applyTheme() {
     fontLink.href = THEME.fontUrl;
   }
 
+  // 2. 画面全体のフォントを強制上書きするスタイルタグを注入
+  if (THEME.fontMain) {
+    let styleOverride = document.getElementById("theme-font-override");
+    if (!styleOverride) {
+      styleOverride = document.createElement("style");
+      styleOverride.id = "theme-font-override";
+      document.head.appendChild(styleOverride);
+    }
+    styleOverride.textContent = `
+      body, button, input, textarea, select, .story-text, .side-title, .logo-title, .question-label, .card, .container {
+        font-family: ${THEME.fontMain} !important;
+      }
+    `;
+  }
+
   const root = document.documentElement;
 
-  // 2. カラー変数の適用
+  // 3. カラー変数の適用
   if (THEME.colors) {
     Object.entries(THEME.colors).forEach(([property, value]) => {
       root.style.setProperty(property, value);
     });
-  }
-
-  // 3. フォント変数の適用（rootとbody両方に直接注入）
-  if (THEME.fontMain) {
-    root.style.setProperty("--font-main", THEME.fontMain);
-    document.body.style.setProperty("font-family", THEME.fontMain, "important");
-  }
-  if (THEME.fontTitle) {
-    root.style.setProperty("--font-title", THEME.fontTitle);
   }
 
   // 4. カードの透かし刻印とカラーの適用
