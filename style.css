@@ -4,7 +4,13 @@
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --bg-body: #f8fafc;
+  --bg-gradient: none; /* 背景グラデーション */
   --card-bg: #ffffff;
+  --card-text: #0f172a; /* カード内の文字色 */
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); /* カードの陰影・質感 */
+  --card-watermark: ""; /* カード右上の透かし刻印テキスト */
+  --watermark-color: #64748b;
+  --container-glow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 外枠の発光・光彩 */
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border: #cbd5e1;
@@ -14,7 +20,7 @@
   --correct-text: #166534;
   --wrong-bg: #fee2e2;
   --wrong-text: #991b1b;
-  /* フォント用CSS変数（初期値は標準ゴシック） */
+  /* フォント用CSS変数 */
   --font-main: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   --font-title: var(--font-main);
 }
@@ -25,6 +31,7 @@ body {
   font-family: var(--font-main);
   color: var(--text-main);
   background-color: var(--bg-body);
+  background-image: var(--bg-gradient);
   padding: 16px;
   overflow-x: hidden;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -39,9 +46,9 @@ body {
   border: 2px solid var(--border);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--container-glow);
   position: relative;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .header {
@@ -94,6 +101,7 @@ body {
   cursor: pointer;
   text-align: center;
   line-height: 1.25;
+  font-family: var(--font-main);
   transition: all 0.15s ease;
 }
 
@@ -128,15 +136,30 @@ body {
   transition: width 0.3s ease;
 }
 
+/* 問題表示カード：透かし刻印・質感シャドウ・個別テキスト色対応 */
 .card,
 .question-card {
-  background: var(--card-bg);
-  color: var(--text-main);
+  background: var(--card-bg) !important;
+  color: var(--card-text) !important;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--card-shadow) !important;
+  position: relative;
+}
+
+.card::before,
+.question-card::before {
+  content: var(--card-watermark);
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  font-family: monospace;
+  color: var(--watermark-color);
+  pointer-events: none;
 }
 
 .question-label {
@@ -148,13 +171,15 @@ body {
   font-size: 0.72rem;
   font-weight: bold;
   margin-bottom: 8px;
+  font-family: var(--font-title);
 }
 
 .story-text { 
   margin: 0; 
   font-size: 0.95rem; 
   line-height: 1.65;
-  color: var(--text-main);
+  color: var(--card-text) !important;
+  font-family: var(--font-main);
 }
 
 .split-container {
@@ -174,7 +199,13 @@ body {
 }
 .side-column.credit { border-color: var(--credit-border); }
 
-.side-title { text-align: center; margin-bottom: 8px; font-weight: bold; font-size: 0.85rem; }
+.side-title { 
+  text-align: center; 
+  margin-bottom: 8px; 
+  font-weight: bold; 
+  font-size: 0.85rem; 
+  font-family: var(--font-main);
+}
 
 .entry-row { display: flex; gap: 6px; margin-bottom: 8px; }
 
@@ -211,6 +242,7 @@ body {
   font-size: 0.8rem;
   cursor: pointer;
   font-weight: bold;
+  font-family: var(--font-main);
   transition: all 0.15s ease;
 }
 .btn-add:hover {
@@ -241,6 +273,7 @@ body {
   border-radius: 10px;
   font-size: 0.9rem;
   line-height: 1.6;
+  font-family: var(--font-main);
 }
 .result-box.correct { 
   background: var(--correct-bg); 
@@ -279,6 +312,7 @@ body {
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 8px;
+  font-family: var(--font-main);
 }
 .btn-review { background: #f59e0b; color: #ffffff; }
 .btn-restart { background: #475569; color: #ffffff; }
@@ -310,6 +344,7 @@ textarea {
   border: none;
   border-radius: 8px;
   font-weight: bold;
+  font-family: var(--font-main);
   cursor: pointer;
 }
 .reset-link {
