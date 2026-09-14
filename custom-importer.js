@@ -5,16 +5,55 @@
 (function () {
   const STORAGE_KEY_THEME = "boki_custom_theme_data";
 
-  // 1. 保存されたカスタムテーマを即時適用
+  // 1. 保存されたカスタムテーマを即時適用（フォント・透かし文字・光彩まで完全適用）
   function applySavedTheme() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_THEME);
       if (saved) {
         const theme = JSON.parse(saved);
+        const root = document.documentElement;
+
+        // Webフォント動的読み込み
+        if (theme.fontUrl) {
+          let fontLink = document.getElementById("theme-font-link");
+          if (!fontLink) {
+            fontLink = document.createElement("link");
+            fontLink.id = "theme-font-link";
+            fontLink.rel = "stylesheet";
+            document.head.appendChild(fontLink);
+          }
+          fontLink.href = theme.fontUrl;
+        }
+
+        // フォント強制上書きスタイル注入
+        if (theme.fontMain) {
+          let styleOverride = document.getElementById("theme-font-override");
+          if (!styleOverride) {
+            styleOverride = document.createElement("style");
+            styleOverride.id = "theme-font-override";
+            document.head.appendChild(styleOverride);
+          }
+          styleOverride.textContent = `
+            body, button, input, textarea, select, .story-text, .side-title, .logo-title, .question-label, .card, .container {
+              font-family: ${theme.fontMain} !important;
+            }
+          `;
+        }
+
+        // カラー・グラデーション・光彩変数の適用
         if (theme.colors) {
-          const root = document.documentElement;
           Object.entries(theme.colors).forEach(([k, v]) => root.style.setProperty(k, v));
         }
+
+        // カード透かし刻印
+        if (theme.cardWatermark) {
+          root.style.setProperty("--card-watermark", `"${theme.cardWatermark}"`);
+        }
+        if (theme.watermarkColor) {
+          root.style.setProperty("--watermark-color", theme.watermarkColor);
+        }
+
+        // タイトル・ロゴ・ボタン
         if (theme.appTitle) {
           const t = document.getElementById("app-title");
           if (t) t.textContent = theme.appTitle;
@@ -79,6 +118,7 @@
         const clean = val.replace(/^const\s+THEME\s*=\s*/, "").replace(/;$/, "");
         const parsed = JSON.parse(clean);
         localStorage.setItem(STORAGE_KEY_THEME, JSON.stringify(parsed));
+        localStorage.setItem("boki_user_theme", JSON.stringify(parsed));
         alert("テーマを適用しました！");
         location.reload();
       } catch (e) {
@@ -88,11 +128,12 @@
 
     document.getElementById("reset-theme-btn").addEventListener("click", () => {
       localStorage.removeItem(STORAGE_KEY_THEME);
+      localStorage.removeItem("boki_user_theme");
       alert("テーマ設定を初期値に戻しました。");
       location.reload();
     });
 
-    // 全ステージ一括更新の処理（app.jsと連携するように修正）
+    // 全ステージ一括更新の処理
     document.getElementById("load-all-stages-btn").addEventListener("click", () => {
       const val = document.getElementById("all-stages-input").value.trim();
       if (!val) return alert("問題データを入力してください。");
@@ -102,10 +143,8 @@
 
         if (!Array.isArray(parsed) || parsed.length === 0) throw new Error();
 
-        // app.js が読み込むキー「boki_user_stages」に直接保存
         localStorage.setItem("boki_user_stages", JSON.stringify(parsed));
 
-        // 過去の個別ステージキャッシュが邪魔しないようクリア
         for (let i = 0; i < 10; i++) {
           localStorage.removeItem(`boki_user_st${i}_data`);
         }
@@ -117,8 +156,6 @@
       }
     });
   }
-    
-    
 
   window.addEventListener("DOMContentLoaded", () => {
     applySavedTheme();
