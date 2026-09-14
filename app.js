@@ -10,7 +10,7 @@ let isReviewMode = false;
 function applyTheme() {
   if (typeof THEME === "undefined") return;
 
-  // 1. Webフォント（Google Fonts等）の動的読み込み
+  // 1. Webフォントの動的読み込み
   if (THEME.fontUrl) {
     let fontLink = document.getElementById("theme-font-link");
     if (!fontLink) {
@@ -31,9 +31,10 @@ function applyTheme() {
     });
   }
 
-  // 3. フォント変数の適用
+  // 3. フォント変数の適用（rootとbody両方に直接注入）
   if (THEME.fontMain) {
     root.style.setProperty("--font-main", THEME.fontMain);
+    document.body.style.setProperty("font-family", THEME.fontMain, "important");
   }
   if (THEME.fontTitle) {
     root.style.setProperty("--font-title", THEME.fontTitle);
