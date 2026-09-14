@@ -6,11 +6,11 @@ let wrongList = [];
 let answeredSet = new Set();
 let isReviewMode = false;
 
-// テーマ適用（フォント・カラー・タイトル）
+// テーマ適用（フォント・カラー・タイトル・質感・透かし刻印）
 function applyTheme() {
   if (typeof THEME === "undefined") return;
 
-  // Webフォント（Google Fonts等）の動的読み込み
+  // 1. Webフォント（Google Fonts等）の動的読み込み
   if (THEME.fontUrl) {
     let fontLink = document.getElementById("theme-font-link");
     if (!fontLink) {
@@ -22,15 +22,16 @@ function applyTheme() {
     fontLink.href = THEME.fontUrl;
   }
 
-  // カラー変数の適用
   const root = document.documentElement;
+
+  // 2. カラー変数の適用
   if (THEME.colors) {
     Object.entries(THEME.colors).forEach(([property, value]) => {
       root.style.setProperty(property, value);
     });
   }
 
-  // フォント変数の適用
+  // 3. フォント変数の適用
   if (THEME.fontMain) {
     root.style.setProperty("--font-main", THEME.fontMain);
   }
@@ -38,6 +39,15 @@ function applyTheme() {
     root.style.setProperty("--font-title", THEME.fontTitle);
   }
 
+  // 4. カードの透かし刻印とカラーの適用
+  if (THEME.cardWatermark) {
+    root.style.setProperty("--card-watermark", `"${THEME.cardWatermark}"`);
+  }
+  if (THEME.watermarkColor) {
+    root.style.setProperty("--watermark-color", THEME.watermarkColor);
+  }
+
+  // 5. テキスト・ロゴ等の適用
   const appTitleEl = document.getElementById("app-title");
   const appLogoEl = document.getElementById("app-logo");
   const submitBtnEl = document.getElementById("submit-btn");
@@ -51,8 +61,7 @@ function applyTheme() {
 
 // 初期化（保存されたカスタムテーマ・問題を復元）
 function init() {
-
-    // 1. 保存済みテーマがあれば復元
+  // 1. 保存済みテーマがあれば復元
   try {
     const savedTheme = localStorage.getItem("boki_custom_theme_data") || localStorage.getItem("boki_user_theme");
     if (savedTheme) {
@@ -60,7 +69,7 @@ function init() {
     }
   } catch (e) {}
 
-applyTheme();
+  applyTheme();
 
   // 2. 保存済み問題データ（全ステージ）があれば復元
   try {
@@ -209,7 +218,6 @@ function loadQuestion(index) {
   if (fillEl) fillEl.style.width = percent + "%";
   if (textEl) textEl.textContent = `${index + 1} / ${currentQuestions.length} 問 (${percent}%)`;
 
-  // 借方の最初の科目入力欄に自動フォーカス
   const firstDebitInput = document.querySelector("#debit-rows input[type='text']");
   if (firstDebitInput) firstDebitInput.focus();
 }
@@ -357,16 +365,14 @@ function startFreshStage() {
   loadStage(currentStageIndex);
 }
 
-// 初期化（ユーザーが保存したカスタムテーマ・問題を全クリアし、元の基本形へ戻す）
 function forceReset() {
   if (confirm("取り込んだテーマと問題をすべて初期化し、配布時の基本状態に戻しますか？")) {
-    // 端末に記憶された全カスタムデータ（テーマ・全ステージ問題・個別問題・進行度）を完全消去
     localStorage.clear();
     location.reload();
   }
 }
 
-// 🎨 テーマ設定を取り込む（端末に保存され、ホーム画面から開いても維持される）
+// 🎨 テーマ設定を取り込む
 function loadCustomTheme() {
   const input = document.getElementById("theme-input") || document.getElementById("json-theme-input");
   if (!input || !input.value.trim()) {
@@ -377,6 +383,7 @@ function loadCustomTheme() {
     const data = JSON.parse(input.value.trim());
     THEME = data;
     localStorage.setItem("boki_user_theme", JSON.stringify(data));
+    localStorage.setItem("boki_custom_theme_data", JSON.stringify(data));
     applyTheme();
     alert("🎨 テーマ設定を取り込みました！ホーム画面から開いてもこのテーマが維持されます。");
   } catch (e) {
@@ -384,7 +391,7 @@ function loadCustomTheme() {
   }
 }
 
-// 📦 問題データを取り込む（端末に保存され、ホーム画面から開いても維持される）
+// 📦 問題データを取り込む
 function loadCustomData() {
   const input = document.getElementById("json-input");
   if (!input || !input.value.trim()) {
@@ -395,13 +402,11 @@ function loadCustomData() {
     const data = JSON.parse(input.value.trim());
     if (Array.isArray(data) && data.length > 0) {
       if (data[0].questions) {
-        // 全5ステージ一括形式
         window.STAGES = data;
         localStorage.setItem("boki_user_stages", JSON.stringify(data));
         loadStage(0);
         alert(`📦 全${data.length}ステージの問題を取り込みました！`);
       } else {
-        // 単一ステージ形式
         STAGES[currentStageIndex].questions = data;
         localStorage.setItem(`boki_user_st${currentStageIndex}_data`, JSON.stringify(data));
         loadStage(currentStageIndex);
@@ -417,7 +422,6 @@ function loadCustomData() {
 
 window.addEventListener("DOMContentLoaded", init);
 
-// PC操作用：左右矢印キーで問題移動
 document.addEventListener("keydown", (e) => {
   if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
   const clearArea = document.getElementById("clear-area");
