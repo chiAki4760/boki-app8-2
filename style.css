@@ -1,26 +1,33 @@
 * { box-sizing: border-box; }
 
 :root {
+  /* 基本配色（初期値：クラシックモダン） */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
-  --bg-body: #f8fafc;
-  --bg-gradient: none; /* 背景グラデーション */
-  --card-bg: #ffffff;
-  --card-text: #0f172a; /* カード内の文字色 */
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); /* カードの陰影・質感 */
-  --card-watermark: ""; /* カード右上の透かし刻印テキスト */
-  --watermark-color: #64748b;
-  --container-glow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 外枠の発光・光彩 */
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border: #cbd5e1;
+  
+  /* 階層型背景システム */
+  --bg-body: #0f172a;                                                    /* 画面外側の闇・背景 */
+  --bg-gradient: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+  --container-bg: #ffffff;                                              /* 帳簿・手帳本体の背景色 */
+  --container-glow: 0 12px 35px rgba(0, 0, 0, 0.45);                    /* 外枠の重厚な影・発光 */
+  --border: #cbd5e1;                                                    /* 枠線 */
+
+  /* カード・入力エリア専用（視認性の要） */
+  --card-bg: #f8fafc;                                                   /* カード自体の背景 */
+  --card-text: #0f172a;                                                 /* カード・入力欄・見出しの確実な文字色 */
+  --card-shadow: inset 0 0 15px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.08);
+  --card-watermark: "ACCOUNTING DRILL // STAGE-01";
+  --watermark-color: #94a3b8;
+
+  /* 簿記用アクセント */
   --debit-border: #3b82f6;
   --credit-border: #ef4444;
   --correct-bg: #dcfce7;
   --correct-text: #166534;
   --wrong-bg: #fee2e2;
   --wrong-text: #991b1b;
-  /* フォント用CSS変数 */
+
+  /* フォント変数 */
   --font-main: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
   --font-title: var(--font-main);
 }
@@ -29,36 +36,26 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-main) !important;
-  color: var(--text-main);
   background-color: var(--bg-body);
   background-image: var(--bg-gradient);
+  color: var(--card-text);
   padding: 16px;
   overflow-x: hidden;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  line-height: 1.6;
 }
 
-/* 各パーツにも確実にフォント変数を継承させる */
-.logo-title, .question-label, .btn-submit {
-  font-family: var(--font-title, var(--font-main)) !important;
-}
-
-.story-text, .side-title, .entry-row input, .btn-add, .nav-btn, .result-box, .stage-btn {
-  font-family: var(--font-main) !important;
-}
-
-
+/* 帳簿本体（コンテナ） */
 .container {
   width: 100%;
   max-width: 680px;
   margin: 0 auto;
-  background: var(--card-bg);
-  color: var(--text-main);
+  background: var(--container-bg) !important;
+  color: var(--card-text) !important;
   border: 2px solid var(--border);
   border-radius: 16px;
-  padding: 20px;
+  padding: 22px;
   box-shadow: var(--container-glow);
   position: relative;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .header {
@@ -66,30 +63,32 @@ body {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1.5px solid var(--border);
   margin-bottom: 14px;
 }
 
 .logo-area { display: flex; align-items: center; gap: 10px; }
-.logo-icon { font-size: 1.8rem; line-height: 1; }
+.logo-icon { font-size: 2rem; line-height: 1; }
 .logo-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: var(--primary);
-  font-weight: 800;
-  font-family: var(--font-title);
+  font-weight: 900;
+  font-family: var(--font-title, var(--font-main)) !important;
+  letter-spacing: 1px;
 }
 
 .status-badge {
   background: var(--primary);
-  color: #ffffff;
-  padding: 4px 10px;
+  color: #ffffff !important;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: bold;
 }
-.status-badge.review { background: #f59e0b; color: #ffffff; }
+.status-badge.review { background: #b45309; }
 
+/* 5段階ステージタブ */
 .stage-tabs {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -104,36 +103,38 @@ body {
   padding: 8px 4px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--card-bg);
+  background: rgba(0, 0, 0, 0.05);
   font-size: 0.72rem;
   font-weight: bold;
-  color: var(--text-muted);
+  color: var(--card-text) !important;
   cursor: pointer;
   text-align: center;
   line-height: 1.25;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   transition: all 0.15s ease;
 }
 
 .stage-btn.active {
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--primary) !important;
+  color: #ffffff !important;
   border-color: var(--primary);
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
+/* 進捗バー */
 .quest-progress {
   margin-bottom: 16px;
   padding: 10px 14px;
-  background: rgba(100, 116, 139, 0.08);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--border);
   border-radius: 10px;
+  color: var(--card-text) !important;
 }
 
 .progress-track {
   height: 8px;
   width: 100%;
-  background: rgba(100, 116, 139, 0.18);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 999px;
   overflow: hidden;
   margin-top: 6px;
@@ -146,14 +147,14 @@ body {
   transition: width 0.3s ease;
 }
 
-/* 問題表示カード：透かし刻印・質感シャドウ・個別テキスト色対応 */
+/* 羊皮紙・古文書調カード */
 .card,
 .question-card {
   background: var(--card-bg) !important;
   color: var(--card-text) !important;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 18px 20px;
   margin-bottom: 14px;
   box-shadow: var(--card-shadow) !important;
   position: relative;
@@ -169,29 +170,33 @@ body {
   letter-spacing: 1.5px;
   font-family: monospace;
   color: var(--watermark-color);
+  font-weight: bold;
+  opacity: 0.85;
   pointer-events: none;
 }
 
 .question-label {
   display: inline-block;
   background: var(--primary);
-  color: #ffffff;
-  padding: 3px 8px;
+  color: #ffffff !important;
+  padding: 3px 10px;
   border-radius: 4px;
   font-size: 0.72rem;
   font-weight: bold;
   margin-bottom: 8px;
-  font-family: var(--font-title);
+  font-family: var(--font-title, var(--font-main)) !important;
 }
 
 .story-text { 
   margin: 0; 
-  font-size: 0.95rem; 
-  line-height: 1.65;
+  font-size: 0.96rem; 
+  line-height: 1.8;
+  font-weight: 700;
   color: var(--card-text) !important;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
 }
 
+/* 借方・貸方スプリットコンテナ */
 .split-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -202,76 +207,80 @@ body {
 
 .side-column {
   padding: 12px;
-  background: rgba(100, 116, 139, 0.04);
+  background: rgba(0, 0, 0, 0.03);
   border: 1.5px solid var(--debit-border);
   border-radius: 10px;
-  color: var(--text-main);
+  color: var(--card-text) !important;
 }
 .side-column.credit { border-color: var(--credit-border); }
 
 .side-title { 
   text-align: center; 
   margin-bottom: 8px; 
-  font-weight: bold; 
+  font-weight: 900; 
   font-size: 0.85rem; 
-  font-family: var(--font-main);
+  color: var(--card-text) !important;
+  font-family: var(--font-main) !important;
 }
 
 .entry-row { display: flex; gap: 6px; margin-bottom: 8px; }
 
 .entry-row input {
-  padding: 8px;
+  padding: 9px;
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.9rem;
-  background: var(--card-bg);
-  color: var(--card-text);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--card-text) !important;
+  font-weight: 700;
   width: 100%;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
 }
 .entry-row input[type="text"] { flex: 1.3; }
 .entry-row input[type="number"] { flex: 1; }
-.entry-row input:focus { outline: none; border-color: var(--primary); }
+.entry-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 5px var(--primary); }
 
 .btn-remove {
   background: var(--wrong-bg);
   border: 1px solid var(--credit-border);
   border-radius: 6px;
-  color: var(--wrong-text);
+  color: var(--wrong-text) !important;
   cursor: pointer;
   font-weight: bold;
 }
 
 .btn-add {
   width: 100%;
-  padding: 6px;
+  padding: 7px;
   background: transparent;
   border: 1px dashed var(--border);
-  color: var(--text-muted);
+  color: var(--card-text) !important;
   border-radius: 6px;
   font-size: 0.8rem;
   cursor: pointer;
   font-weight: bold;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   transition: all 0.15s ease;
 }
 .btn-add:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 
+/* 判定ボタン */
 .btn-submit {
   width: 100%;
   padding: 14px;
   background: var(--primary);
-  color: #ffffff;
+  color: #ffffff !important;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
-  font-weight: bold;
-  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 900;
+  font-family: var(--font-title, var(--font-main)) !important;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+  letter-spacing: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: background 0.15s ease;
 }
 .btn-submit:hover { background: var(--primary-hover); }
@@ -279,41 +288,38 @@ body {
 .result-box {
   display: none;
   margin-top: 14px;
-  padding: 14px;
+  padding: 14px 18px;
   border-radius: 10px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  font-family: var(--font-main);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  font-family: var(--font-main) !important;
 }
 .result-box.correct { 
   background: var(--correct-bg); 
   border: 1px solid var(--primary); 
-  color: var(--correct-text); 
+  color: var(--correct-text) !important; 
 }
 .result-box.wrong { 
   background: var(--wrong-bg); 
   border: 1px solid var(--credit-border); 
-  color: var(--wrong-text); 
+  color: var(--wrong-text) !important; 
 }
 
 .nav-buttons { display: flex; gap: 10px; margin-top: 14px; }
 .nav-btn {
   flex: 1;
   padding: 10px;
-  background: rgba(100, 116, 139, 0.12);
-  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--card-text) !important;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-weight: bold;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   cursor: pointer;
-  transition: background 0.15s ease;
 }
-.nav-btn:hover {
-  background: rgba(100, 116, 139, 0.2);
-}
+.nav-btn:hover { background: rgba(0, 0, 0, 0.15); }
 
-.clear-card { display: none; text-align: center; padding: 24px 16px; }
+.clear-card { display: none; text-align: center; padding: 26px 16px; color: var(--card-text) !important; }
 .btn-review, .btn-restart {
   width: 100%;
   padding: 12px;
@@ -322,17 +328,20 @@ body {
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 8px;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
 }
-.btn-review { background: #f59e0b; color: #ffffff; }
-.btn-restart { background: #475569; color: #ffffff; }
+.btn-review { background: var(--primary); color: #ffffff !important; }
+.btn-restart { background: #475569; color: #ffffff !important; }
 
+/* 3つの拡張窓エリア */
 details {
   margin-top: 20px;
   border-top: 1px dashed var(--border);
   padding-top: 14px;
+  color: var(--card-text) !important;
 }
-summary { cursor: pointer; font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
+summary { cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
 textarea {
   width: 100%;
   height: 90px;
@@ -342,27 +351,30 @@ textarea {
   border-radius: 8px;
   font-family: monospace;
   font-size: 0.8rem;
-  background: var(--card-bg);
-  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a140e !important;
 }
+
 .load-btn {
   width: 100%;
   margin-top: 8px;
   padding: 10px;
   background: var(--primary);
-  color: #ffffff;
+  color: #ffffff !important;
   border: none;
   border-radius: 8px;
   font-weight: bold;
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   cursor: pointer;
 }
+
 .reset-link {
   display: block;
   margin-top: 18px;
   text-align: center;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--card-text) !important;
+  opacity: 0.7;
   cursor: pointer;
   text-decoration: underline;
 }
