@@ -315,7 +315,7 @@ function checkAnswer() {
     }
     if (!answeredSet.has(currentIndex)) {
       correctCount++;
-      if (isReviewMode) wrongList = wrongList.filter(item => item.story !== q.story);
+      if (isReviewMode) wrongList = wrongList.filter(item => item !== q);
       answeredSet.add(currentIndex);
     }
   } else {
@@ -327,7 +327,7 @@ function checkAnswer() {
       res.innerHTML = `<strong>不正解</strong><br>正解 借方: ${dStr}<br>正解 貸方: ${cStr}<br><br>${escapeHtml(q.explanation)}`;
     }
     if (!answeredSet.has(currentIndex)) {
-      if (!wrongList.some(item => item.story === q.story)) wrongList.push(q);
+      if (!wrongList.some(item => item === q)) wrongList.push(q);
       answeredSet.add(currentIndex);
     }
   }
