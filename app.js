@@ -72,7 +72,9 @@ function init() {
   try {
     const savedTheme = localStorage.getItem("boki_custom_theme_data") || localStorage.getItem("boki_user_theme");
     if (savedTheme) {
-      THEME = JSON.parse(savedTheme);
+      const parsedTheme = JSON.parse(savedTheme);
+      Object.keys(THEME).forEach(key => delete THEME[key]);
+      Object.assign(THEME, parsedTheme);
     }
   } catch (e) {}
 
@@ -88,8 +90,6 @@ function init() {
           if (STAGES[idx]) {
             if (stage.title) STAGES[idx].title = stage.title;
             if (stage.questions) STAGES[idx].questions = stage.questions;
-          } else {
-            STAGES.push(stage);
           }
         });
       }
@@ -239,7 +239,7 @@ function getEntries(side) {
     if (inputs.length >= 2) {
       const account = inputs[0].value.trim();
       const amount = parseInt(inputs[1].value, 10);
-      if (account && !isNaN(amount)) entries.push({ account, amount });
+      if (account && !isNaN(amount) && amount > 0) entries.push({ account, amount });
     }
   }
   return entries;
@@ -279,6 +279,12 @@ function triggerShake() {
   setTimeout(() => { container.classList.remove("shake-animation"); }, 500);
 }
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function checkAnswer() {
   const q = currentQuestions[currentIndex];
   const userDebit = getEntries("debit");
@@ -303,23 +309,23 @@ function checkAnswer() {
     spawnRisingMagic();
     if (res) {
       res.className = "result-box correct";
-      res.innerHTML = `<strong>正解！</strong><br>${q.explanation}`;
+      res.innerHTML = `<strong>正解！</strong><br>${escapeHtml(q.explanation)}`;
     }
     if (!answeredSet.has(currentIndex)) {
       correctCount++;
-      if (isReviewMode) wrongList = wrongList.filter(item => item.story !== q.story);
+      if (isReviewMode) wrongList = wrongList.filter(item => item !== q);
       answeredSet.add(currentIndex);
     }
   } else {
     triggerShake();
     if (res) {
       res.className = "result-box wrong";
-      const dStr = cDebit.map(d => `(${d.account}: ${d.amount.toLocaleString()}円)`).join(" ");
-      const cStr = cCredit.map(c => `(${c.account}: ${c.amount.toLocaleString()}円)`).join(" ");
-      res.innerHTML = `<strong>不正解</strong><br>正解 借方: ${dStr}<br>正解 貸方: ${cStr}<br><br>${q.explanation}`;
+      const dStr = cDebit.map(d => `(${escapeHtml(d.account)}: ${d.amount.toLocaleString()}円)`).join(" ");
+      const cStr = cCredit.map(c => `(${escapeHtml(c.account)}: ${c.amount.toLocaleString()}円)`).join(" ");
+      res.innerHTML = `<strong>不正解</strong><br>正解 借方: ${dStr}<br>正解 貸方: ${cStr}<br><br>${escapeHtml(q.explanation)}`;
     }
     if (!answeredSet.has(currentIndex)) {
-      if (!wrongList.some(item => item.story === q.story)) wrongList.push(q);
+      if (!wrongList.some(item => item === q)) wrongList.push(q);
       answeredSet.add(currentIndex);
     }
   }
@@ -379,25 +385,6 @@ function forceReset() {
   }
 }
 
-// 🎨 テーマ設定を取り込む
-function loadCustomTheme() {
-  const input = document.getElementById("theme-input") || document.getElementById("json-theme-input");
-  if (!input || !input.value.trim()) {
-    alert("テーマJSONデータを貼り付けてください。");
-    return;
-  }
-  try {
-    const data = JSON.parse(input.value.trim());
-    THEME = data;
-    localStorage.setItem("boki_user_theme", JSON.stringify(data));
-    localStorage.setItem("boki_custom_theme_data", JSON.stringify(data));
-    applyTheme();
-    alert("🎨 テーマ設定を取り込みました！ホーム画面から開いてもこのテーマが維持されます。");
-  } catch (e) {
-    alert("⚠️ テーマJSONの形式を確認してください。");
-  }
-}
-
 // 📦 問題データを取り込む
 function loadCustomData() {
   const input = document.getElementById("json-input");
@@ -409,8 +396,13 @@ function loadCustomData() {
     const data = JSON.parse(input.value.trim());
     if (Array.isArray(data) && data.length > 0) {
       if (data[0].questions) {
-        window.STAGES = data;
+        const maxStages = STAGES.length;
+        STAGES.length = 0;
+        STAGES.push(...data.slice(0, maxStages));
         localStorage.setItem("boki_user_stages", JSON.stringify(data));
+        for (let i = 0; i < 10; i++) {
+          localStorage.removeItem(`boki_user_st${i}_data`);
+        }
         loadStage(0);
         alert(`📦 全${data.length}ステージの問題を取り込みました！`);
       } else {
