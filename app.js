@@ -409,7 +409,8 @@ function loadCustomData() {
     const data = JSON.parse(input.value.trim());
     if (Array.isArray(data) && data.length > 0) {
       if (data[0].questions) {
-        window.STAGES = data;
+        STAGES.length = 0;
+        STAGES.push(...data);
         localStorage.setItem("boki_user_stages", JSON.stringify(data));
         loadStage(0);
         alert(`📦 全${data.length}ステージの問題を取り込みました！`);
