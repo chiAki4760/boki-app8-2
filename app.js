@@ -281,6 +281,12 @@ function triggerShake() {
   setTimeout(() => { container.classList.remove("shake-animation"); }, 500);
 }
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function checkAnswer() {
   const q = currentQuestions[currentIndex];
   const userDebit = getEntries("debit");
@@ -305,7 +311,7 @@ function checkAnswer() {
     spawnRisingMagic();
     if (res) {
       res.className = "result-box correct";
-      res.innerHTML = `<strong>正解！</strong><br>${q.explanation}`;
+      res.innerHTML = `<strong>正解！</strong><br>${escapeHtml(q.explanation)}`;
     }
     if (!answeredSet.has(currentIndex)) {
       correctCount++;
@@ -316,9 +322,9 @@ function checkAnswer() {
     triggerShake();
     if (res) {
       res.className = "result-box wrong";
-      const dStr = cDebit.map(d => `(${d.account}: ${d.amount.toLocaleString()}円)`).join(" ");
-      const cStr = cCredit.map(c => `(${c.account}: ${c.amount.toLocaleString()}円)`).join(" ");
-      res.innerHTML = `<strong>不正解</strong><br>正解 借方: ${dStr}<br>正解 貸方: ${cStr}<br><br>${q.explanation}`;
+      const dStr = cDebit.map(d => `(${escapeHtml(d.account)}: ${d.amount.toLocaleString()}円)`).join(" ");
+      const cStr = cCredit.map(c => `(${escapeHtml(c.account)}: ${c.amount.toLocaleString()}円)`).join(" ");
+      res.innerHTML = `<strong>不正解</strong><br>正解 借方: ${dStr}<br>正解 貸方: ${cStr}<br><br>${escapeHtml(q.explanation)}`;
     }
     if (!answeredSet.has(currentIndex)) {
       if (!wrongList.some(item => item.story === q.story)) wrongList.push(q);
