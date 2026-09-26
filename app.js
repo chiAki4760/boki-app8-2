@@ -90,8 +90,6 @@ function init() {
           if (STAGES[idx]) {
             if (stage.title) STAGES[idx].title = stage.title;
             if (stage.questions) STAGES[idx].questions = stage.questions;
-          } else {
-            STAGES.push(stage);
           }
         });
       }
