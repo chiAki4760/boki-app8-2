@@ -72,7 +72,9 @@ function init() {
   try {
     const savedTheme = localStorage.getItem("boki_custom_theme_data") || localStorage.getItem("boki_user_theme");
     if (savedTheme) {
-      THEME = JSON.parse(savedTheme);
+      const parsedTheme = JSON.parse(savedTheme);
+      Object.keys(THEME).forEach(key => delete THEME[key]);
+      Object.assign(THEME, parsedTheme);
     }
   } catch (e) {}
 
@@ -388,7 +390,8 @@ function loadCustomTheme() {
   }
   try {
     const data = JSON.parse(input.value.trim());
-    THEME = data;
+    Object.keys(THEME).forEach(key => delete THEME[key]);
+    Object.assign(THEME, data);
     localStorage.setItem("boki_user_theme", JSON.stringify(data));
     localStorage.setItem("boki_custom_theme_data", JSON.stringify(data));
     applyTheme();
