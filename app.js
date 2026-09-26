@@ -401,6 +401,9 @@ function loadCustomData() {
         STAGES.length = 0;
         STAGES.push(...data);
         localStorage.setItem("boki_user_stages", JSON.stringify(data));
+        for (let i = 0; i < 10; i++) {
+          localStorage.removeItem(`boki_user_st${i}_data`);
+        }
         loadStage(0);
         alert(`📦 全${data.length}ステージの問題を取り込みました！`);
       } else {
