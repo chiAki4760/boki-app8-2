@@ -231,7 +231,8 @@ body {
   border-radius: 6px;
   font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.85);
-  color: var(--card-text) !important;
+  /* 背景が常に白系のため、テーマの --card-text（暗いテーマでは白）には連動させない */
+  color: var(--input-text, #0f172a) !important;
   font-weight: 700;
   width: 100%;
   font-family: var(--font-main) !important;
