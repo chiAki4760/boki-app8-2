@@ -239,7 +239,7 @@ function getEntries(side) {
     if (inputs.length >= 2) {
       const account = inputs[0].value.trim();
       const amount = parseInt(inputs[1].value, 10);
-      if (account && !isNaN(amount)) entries.push({ account, amount });
+      if (account && !isNaN(amount) && amount > 0) entries.push({ account, amount });
     }
   }
   return entries;
