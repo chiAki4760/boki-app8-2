@@ -381,26 +381,6 @@ function forceReset() {
   }
 }
 
-// 🎨 テーマ設定を取り込む
-function loadCustomTheme() {
-  const input = document.getElementById("theme-input") || document.getElementById("json-theme-input");
-  if (!input || !input.value.trim()) {
-    alert("テーマJSONデータを貼り付けてください。");
-    return;
-  }
-  try {
-    const data = JSON.parse(input.value.trim());
-    Object.keys(THEME).forEach(key => delete THEME[key]);
-    Object.assign(THEME, data);
-    localStorage.setItem("boki_user_theme", JSON.stringify(data));
-    localStorage.setItem("boki_custom_theme_data", JSON.stringify(data));
-    applyTheme();
-    alert("🎨 テーマ設定を取り込みました！ホーム画面から開いてもこのテーマが維持されます。");
-  } catch (e) {
-    alert("⚠️ テーマJSONの形式を確認してください。");
-  }
-}
-
 // 📦 問題データを取り込む
 function loadCustomData() {
   const input = document.getElementById("json-input");
