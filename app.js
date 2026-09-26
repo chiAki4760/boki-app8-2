@@ -396,8 +396,9 @@ function loadCustomData() {
     const data = JSON.parse(input.value.trim());
     if (Array.isArray(data) && data.length > 0) {
       if (data[0].questions) {
+        const maxStages = STAGES.length;
         STAGES.length = 0;
-        STAGES.push(...data);
+        STAGES.push(...data.slice(0, maxStages));
         localStorage.setItem("boki_user_stages", JSON.stringify(data));
         for (let i = 0; i < 10; i++) {
           localStorage.removeItem(`boki_user_st${i}_data`);
